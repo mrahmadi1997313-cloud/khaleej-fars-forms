@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فرم‌های اداری | مرکز مبادله هوشمند خلیج فارس</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Tahoma,Arial,sans-serif;
+    min-height:100vh;
+    color:#12365f;
+    background:
+      linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45)),
+      linear-gradient(135deg,#d9c9b4,#f4eee5);
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:30px 15px 60px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.robot{
+    width:75px;
+    height:75px;
+    margin:auto auto 15px;
+    border-radius:50%;
+    background:#073564;
+    border:3px solid #d5a52c;
+    position:relative;
+    box-shadow:0 8px 20px #0003;
+}
+
+.robot:before,
+.robot:after{
+    content:"";
+    position:absolute;
+    width:10px;
+    height:15px;
+    top:27px;
+    background:white;
+    border-radius:50%;
+}
+
+.robot:before{right:20px}
+.robot:after{left:20px}
+
+.title{
+    display:inline-block;
+    padding:14px 30px;
+    border-radius:20px;
+    color:white;
+    background:linear-gradient(135deg,#052b55,#14518c);
+    border:2px solid #d5a52c;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.subtitle{
+    margin-top:12px;
+    font-weight:bold;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.card{
+    background:rgba(255,255,255,.94);
+    border:2px solid #d5a52c;
+    border-radius:22px;
+    padding:25px 20px;
+    text-align:center;
+    box-shadow:0 12px 30px #0002;
+    transition:.2s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.icon{
+    width:85px;
+    height:85px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    border-radius:50%;
+    background:#073564;
+    border:3px solid #d5a52c;
+    font-size:38px;
+}
+
+.card h2{
+    font-size:21px;
+    margin:20px 0;
+}
+
+button{
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.main-btn{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:13px;
+    color:white;
+    background:linear-gradient(135deg,#062c59,#14528f);
+    font-weight:bold;
+}
+
+.page{
+    display:none;
+}
+
+.panel{
+    background:rgba(255,255,255,.96);
+    border:1px solid #d5a52c;
+    border-radius:22px;
+    padding:25px;
+    box-shadow:0 12px 35px #0002;
+}
+
+.back{
+    border:1px solid #aaa;
+    background:white;
+    padding:9px 15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.field label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:11px;
+    border:1px solid #bcc6d0;
+    border-radius:10px;
+    font-family:inherit;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.submit{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:#073564;
+    color:white;
+    font-weight:bold;
+}
+
+.success{
+    margin-top:20px;
+    padding:18px;
+    border-radius:12px;
+    background:#e2f5e6;
+    border:1px solid #8ac596;
+    text-align:center;
+}
+
+.tracking{
+    font-size:22px;
+    font-weight:bold;
+    color:#073564;
+    margin-top:10px;
+}
+
+.home-btn{
+    margin-top:15px;
+    padding:10px 18px;
+    border:0;
+    border-radius:10px;
+    background:#d5a52c;
+    color:#162f4d;
+    font-weight:bold;
+}
+
+.note{
+    text-align:center;
+    margin-top:25px;
+    font-size:13px;
+    color:#52677d;
+}
+
+@media(max-width:750px){
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
+    .title{
+        font-size:22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+    <div class="robot">
+        <span></span>
+    </div>
+
+    <div class="title">
+        فرم‌های اداری
+    </div>
+
+    <div class="subtitle">
+        مرکز مبادله هوشمند خلیج فارس
+    </div>
+</div>
+
+
+<!-- صفحه اصلی -->
+
+<div id="home">
+
+<div class="cards">
+
+<div class="card">
+    <div class="icon">📅</div>
+    <h2>برگه مرخصی روزانه</h2>
+    <button class="main-btn" onclick="openForm('daily')">
+        تکمیل فرم
+    </button>
+</div>
+
+<div class="card">
+    <div class="icon">🕐</div>
+    <h2>برگه مرخصی ساعتی</h2>
+    <button class="main-btn" onclick="openForm('hourly')">
+        تکمیل فرم
+    </button>
+</div>
+
+<div class="card">
+    <div class="icon">🔄</div>
+    <h2>برگه جایگزین</h2>
+    <button class="main-btn" onclick="openForm('replacement')">
+        تکمیل فرم
+    </button>
+</div>
+
+</div>
+
+<div class="note">
+    لطفاً فرم موردنظر خود را انتخاب و اطلاعات را با دقت وارد کنید.
+</div>
+
+</div>
+
+
+<!-- فرم -->
+
+<div id="formPage" class="page">
+
+<div class="panel">
+
+<button class="back" onclick="goHome()">
+    ← بازگشت
+</button>
+
+<h2 id="formTitle"></h2>
+
+<div id="formContent"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let currentForm="";
+
+const titles={
+    daily:"فرم مرخصی روزانه",
+    hourly:"فرم مرخصی ساعتی",
+    replacement:"فرم جایگزین"
+};
+
+
+function openForm(type){
+
+    currentForm=type;
+
+    document.getElementById("home").style.display="none";
+    document.getElementById("formPage").style.display="block";
+
+    document.getElementById("formTitle").innerText=titles[type];
+
+    let html="";
+
+
+    /* مرخصی روزانه */
+
+    if(type==="daily"){
+
+        html=`
+
+        <form onsubmit="submitForm(event)">
+
+        <div class="form-grid">
+
+        <div class="field">
+            <label>شماره مستخدم</label>
+            <input name="user" required>
+        </div>
+
+        <div class="field">
+            <label>نام و نام خانوادگی</label>
+            <input name="name" required>
+        </div>
+
+        <div class="field">
+            <label>واحد / سمت</label>
+            <input name="unit">
+        </div>
+
+        <div class="field">
+            <label>تاریخ درخواست</label>
+            <input name="requestDate" type="date" required>
+        </div>
+
+        <div class="field">
+            <label>از تاریخ</label>
+            <input name="fromDate" type="date" required>
+        </div>
+
+        <div class="field">
+            <label>تا تاریخ</label>
+            <input name="toDate" type="date" required>
+        </div>
+
+        <div class="field">
+            <label>نوع مرخصی</label>
+
+            <select name="leaveType">
+                <option>استحقاقی</option>
+                <option>استعلاجی</option>
+                <option>بدون حقوق</option>
+            </select>
+
+        </div>
+
+        <div class="field">
+            <label>تعداد روز</label>
+            <input name="days" type="number" min="0" step="0.5">
+        </div>
+
+        <div class="field full">
+            <label>توضیحات</label>
+            <textarea name="description" rows="4"></textarea>
+        </div>
+
+        </div>
+
+        <button class="submit">
+            ثبت درخواست
+        </button>
+
+        </form>
+        `;
+    }
+
+
+    /* مرخصی ساعتی */
+
+    if(type==="hourly"){
+
+        html=`
+
+        <form onsubmit="submitForm(event)">
+
+        <div class="form-grid">
+
+        <div class="field">
+            <label>نام و نام خانوادگی</label>
+            <input name="name" required>
+        </div>
+
+        <div class="field">
+            <label>شماره مستخدم</label>
+            <input name="user" required>
+        </div>
+
+        <div class="field">
+            <label>تاریخ</label>
+            <input name="date" type="date" required>
+        </div>
+
+        <div class="field">
+            <label>واحد / بخش</label>
+            <input name="unit">
+        </div>
+
+        <div class="field">
+            <label>ساعت شروع</label>
+            <input name="start" type="time" required>
+        </div>
+
+        <div class="field">
+            <label>ساعت پایان</label>
+            <input name="end" type="time" required>
+        </div>
+
+        <div class="field full">
+            <label>توضیحات</label>
+            <textarea name="description" rows="4"></textarea>
+        </div>
+
+        </div>
+
+        <button class="submit">
+            ثبت درخواست
+        </button>
+
+        </form>
+        `;
+    }
+
+
+    /* جایگزین */
+
+    if(type==="replacement"){
+
+        html=`
+
+        <form onsubmit="submitForm(event)">
+
+        <div class="form-grid">
+
+        <div class="field">
+            <label>نام درخواست‌کننده</label>
+            <input name="name" required>
+        </div>
+
+        <div class="field">
+            <label>شماره مستخدم</label>
+            <input name="user">
+        </div>
+
+        <div class="field">
+            <label>نام فرد جایگزین</label>
+            <input name="replacement" required>
+        </div>
+
+        <div class="field">
+            <label>تاریخ</label>
+            <input name="date" type="date" required>
+        </div>
+
+        <div class="field">
+            <label>واحد / بخش</label>
+            <input name="unit">
+        </div>
+
+        <div class="field">
+            <label>شیفت</label>
+            <input name="shift">
+        </div>
+
+        <div class="field full">
+            <label>توضیحات</label>
+            <textarea name="description" rows="4"></textarea>
+        </div>
+
+        </div>
+
+        <button class="submit">
+            ثبت درخواست
+        </button>
+
+        </form>
+        `;
+    }
+
+
+    document.getElementById("formContent").innerHTML=html;
+}
+
+
+function submitForm(event){
+
+    event.preventDefault();
+
+    const form=event.target;
+
+    const data=new FormData(form);
+
+    let tracking=
+        "GF-"+
+        new Date().getFullYear()+
+        "-"+
+        Math.floor(100000+Math.random()*900000);
+
+
+    localStorage.setItem(
+        "request_"+tracking,
+        JSON.stringify({
+            type:currentForm,
+            tracking:tracking,
+            date:new Date().toLocaleString("fa-IR"),
+            data:Object.fromEntries(data)
+        })
+    );
+
+
+    document.getElementById("formContent").innerHTML=`
+
+        <div class="success">
+
+            <h2>✅ درخواست شما ثبت شد</h2>
+
+            <div>
+                شماره پیگیری:
+            </div>
+
+            <div class="tracking">
+                ${tracking}
+            </div>
+
+            <p>
+                این شماره را برای پیگیری درخواست خود نگه دارید.
+            </p>
+
+            <button class="home-btn" onclick="goHome()">
+                بازگشت به صفحه اصلی
+            </button>
+
+        </div>
+
+    `;
+}
+
+
+function goHome(){
+
+    document.getElementById("formPage").style.display="none";
+    document.getElementById("home").style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
