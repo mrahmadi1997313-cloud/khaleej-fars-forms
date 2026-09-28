@@ -3,233 +3,262 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>فرم‌های اداری | مرکز مبادله هوشمند خلیج فارس</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+box-sizing:border-box;
+}
 
 body{
-    margin:0;
-    font-family:Tahoma,Arial,sans-serif;
-    min-height:100vh;
-    color:#12365f;
-    background:
-      linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45)),
-      linear-gradient(135deg,#d9c9b4,#f4eee5);
+margin:0;
+font-family:Tahoma,Arial,sans-serif;
+color:#12365f;
+min-height:100vh;
+
+background:
+linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55)),
+linear-gradient(135deg,#d8c8b3,#f5eee4);
 }
 
 .container{
-    max-width:1000px;
-    margin:auto;
-    padding:30px 15px 60px;
+max-width:1000px;
+margin:auto;
+padding:30px 15px 60px;
 }
 
 .header{
-    text-align:center;
-    margin-bottom:30px;
+text-align:center;
+margin-bottom:30px;
 }
 
-.robot{
-    width:75px;
-    height:75px;
-    margin:auto auto 15px;
-    border-radius:50%;
-    background:#073564;
-    border:3px solid #d5a52c;
-    position:relative;
-    box-shadow:0 8px 20px #0003;
+.logo{
+width:75px;
+height:75px;
+margin:auto auto 15px;
+border-radius:50%;
+background:#073564;
+border:3px solid #d5a52c;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:38px;
+box-shadow:0 8px 20px #0003;
 }
-
-.robot:before,
-.robot:after{
-    content:"";
-    position:absolute;
-    width:10px;
-    height:15px;
-    top:27px;
-    background:white;
-    border-radius:50%;
-}
-
-.robot:before{right:20px}
-.robot:after{left:20px}
 
 .title{
-    display:inline-block;
-    padding:14px 30px;
-    border-radius:20px;
-    color:white;
-    background:linear-gradient(135deg,#052b55,#14518c);
-    border:2px solid #d5a52c;
-    font-size:28px;
-    font-weight:bold;
+display:inline-block;
+padding:14px 30px;
+border-radius:20px;
+color:white;
+background:linear-gradient(135deg,#052b55,#14518c);
+border:2px solid #d5a52c;
+font-size:27px;
+font-weight:bold;
 }
 
 .subtitle{
-    margin-top:12px;
-    font-weight:bold;
+margin-top:12px;
+font-weight:bold;
 }
 
 .cards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
 }
 
 .card{
-    background:rgba(255,255,255,.94);
-    border:2px solid #d5a52c;
-    border-radius:22px;
-    padding:25px 20px;
-    text-align:center;
-    box-shadow:0 12px 30px #0002;
-    transition:.2s;
+background:rgba(255,255,255,.95);
+border:2px solid #d5a52c;
+border-radius:22px;
+padding:25px 20px;
+text-align:center;
+box-shadow:0 12px 30px #0002;
+transition:.2s;
 }
 
 .card:hover{
-    transform:translateY(-5px);
+transform:translateY(-4px);
 }
 
 .icon{
-    width:85px;
-    height:85px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:auto;
-    border-radius:50%;
-    background:#073564;
-    border:3px solid #d5a52c;
-    font-size:38px;
+width:85px;
+height:85px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+border-radius:50%;
+background:#073564;
+border:3px solid #d5a52c;
+font-size:38px;
 }
 
 .card h2{
-    font-size:21px;
-    margin:20px 0;
+font-size:20px;
+margin:20px 0;
 }
 
 button{
-    cursor:pointer;
-    font-family:inherit;
+font-family:inherit;
+cursor:pointer;
 }
 
 .main-btn{
-    width:100%;
-    border:0;
-    border-radius:12px;
-    padding:13px;
-    color:white;
-    background:linear-gradient(135deg,#062c59,#14528f);
-    font-weight:bold;
+width:100%;
+border:0;
+border-radius:12px;
+padding:13px;
+color:white;
+background:linear-gradient(135deg,#062c59,#14528f);
+font-weight:bold;
 }
 
 .page{
-    display:none;
+display:none;
 }
 
 .panel{
-    background:rgba(255,255,255,.96);
-    border:1px solid #d5a52c;
-    border-radius:22px;
-    padding:25px;
-    box-shadow:0 12px 35px #0002;
+background:rgba(255,255,255,.97);
+border:1px solid #d5a52c;
+border-radius:22px;
+padding:25px;
+box-shadow:0 12px 35px #0002;
 }
 
 .back{
-    border:1px solid #aaa;
-    background:white;
-    padding:9px 15px;
-    border-radius:10px;
-    margin-bottom:20px;
+border:1px solid #aaa;
+background:white;
+padding:9px 15px;
+border-radius:10px;
+margin-bottom:20px;
 }
 
 .form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
 }
 
 .field label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:6px;
+display:block;
+font-weight:bold;
+margin-bottom:6px;
 }
 
 .field input,
 .field select,
 .field textarea{
-    width:100%;
-    padding:11px;
-    border:1px solid #bcc6d0;
-    border-radius:10px;
-    font-family:inherit;
+width:100%;
+padding:11px;
+border:1px solid #bcc6d0;
+border-radius:10px;
+font-family:inherit;
+font-size:14px;
+background:white;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+outline:none;
+border-color:#d5a52c;
+box-shadow:0 0 0 2px #d5a52c33;
 }
 
 .full{
-    grid-column:1/-1;
+grid-column:1/-1;
 }
 
 .submit{
-    margin-top:20px;
-    width:100%;
-    padding:14px;
-    border:0;
-    border-radius:12px;
-    background:#073564;
-    color:white;
-    font-weight:bold;
+margin-top:20px;
+width:100%;
+padding:14px;
+border:0;
+border-radius:12px;
+background:#073564;
+color:white;
+font-weight:bold;
+font-size:16px;
 }
 
 .success{
-    margin-top:20px;
-    padding:18px;
-    border-radius:12px;
-    background:#e2f5e6;
-    border:1px solid #8ac596;
-    text-align:center;
+margin-top:20px;
+padding:20px;
+border-radius:14px;
+background:#e2f5e6;
+border:1px solid #8ac596;
+text-align:center;
 }
 
 .tracking{
-    font-size:22px;
-    font-weight:bold;
-    color:#073564;
-    margin-top:10px;
+font-size:23px;
+font-weight:bold;
+color:#073564;
+margin-top:10px;
+direction:ltr;
 }
 
 .home-btn{
-    margin-top:15px;
-    padding:10px 18px;
-    border:0;
-    border-radius:10px;
-    background:#d5a52c;
-    color:#162f4d;
-    font-weight:bold;
+margin-top:15px;
+padding:10px 18px;
+border:0;
+border-radius:10px;
+background:#d5a52c;
+color:#162f4d;
+font-weight:bold;
+}
+
+.date-help{
+font-size:12px;
+color:#68798b;
+margin-top:5px;
+}
+
+.today{
+background:#f4f7fa;
+border-radius:12px;
+padding:12px;
+margin-bottom:20px;
+text-align:center;
+font-weight:bold;
+border-right:4px solid #d5a52c;
 }
 
 .note{
-    text-align:center;
-    margin-top:25px;
-    font-size:13px;
-    color:#52677d;
+text-align:center;
+margin-top:25px;
+font-size:13px;
+color:#52677d;
 }
 
 @media(max-width:750px){
-    .cards{
-        grid-template-columns:1fr;
-    }
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .full{
-        grid-column:auto;
-    }
-
-    .title{
-        font-size:22px;
-    }
+.cards{
+grid-template-columns:1fr;
 }
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.full{
+grid-column:auto;
+}
+
+.title{
+font-size:22px;
+}
+
+.panel{
+padding:18px;
+}
+
+}
+
 </style>
 </head>
 
@@ -238,17 +267,19 @@ button{
 <div class="container">
 
 <div class="header">
-    <div class="robot">
-        <span></span>
-    </div>
 
-    <div class="title">
-        فرم‌های اداری
-    </div>
+<div class="logo">
+📮
+</div>
 
-    <div class="subtitle">
-        مرکز مبادله هوشمند خلیج فارس
-    </div>
+<div class="title">
+فرم‌های اداری
+</div>
+
+<div class="subtitle">
+مرکز مبادله هوشمند خلیج فارس
+</div>
+
 </div>
 
 
@@ -259,33 +290,70 @@ button{
 <div class="cards">
 
 <div class="card">
-    <div class="icon">📅</div>
-    <h2>برگه مرخصی روزانه</h2>
-    <button class="main-btn" onclick="openForm('daily')">
-        تکمیل فرم
-    </button>
+
+<div class="icon">
+📅
 </div>
 
-<div class="card">
-    <div class="icon">🕐</div>
-    <h2>برگه مرخصی ساعتی</h2>
-    <button class="main-btn" onclick="openForm('hourly')">
-        تکمیل فرم
-    </button>
+<h2>
+برگه مرخصی روزانه
+</h2>
+
+<button class="main-btn"
+onclick="openForm('daily')">
+
+تکمیل فرم
+
+</button>
+
 </div>
 
+
 <div class="card">
-    <div class="icon">🔄</div>
-    <h2>برگه جایگزین</h2>
-    <button class="main-btn" onclick="openForm('replacement')">
-        تکمیل فرم
-    </button>
+
+<div class="icon">
+🕐
+</div>
+
+<h2>
+برگه مرخصی ساعتی
+</h2>
+
+<button class="main-btn"
+onclick="openForm('hourly')">
+
+تکمیل فرم
+
+</button>
+
+</div>
+
+
+<div class="card">
+
+<div class="icon">
+🔄
+</div>
+
+<h2>
+برگه جایگزین
+</h2>
+
+<button class="main-btn"
+onclick="openForm('replacement')">
+
+تکمیل فرم
+
+</button>
+
 </div>
 
 </div>
 
 <div class="note">
-    لطفاً فرم موردنظر خود را انتخاب و اطلاعات را با دقت وارد کنید.
+
+لطفاً فرم موردنظر خود را انتخاب و اطلاعات را با دقت وارد کنید.
+
 </div>
 
 </div>
@@ -298,10 +366,12 @@ button{
 <div class="panel">
 
 <button class="back" onclick="goHome()">
-    ← بازگشت
+← بازگشت
 </button>
 
 <h2 id="formTitle"></h2>
+
+<div id="todayBox" class="today"></div>
 
 <div id="formContent"></div>
 
@@ -314,273 +384,761 @@ button{
 
 <script>
 
+/* --------------------------------
+   تبدیل میلادی به شمسی
+-------------------------------- */
+
+function gregorianToJalali(gy,gm,gd){
+
+let g_d_m=[
+0,31,59,90,120,151,
+181,212,243,273,304,334
+];
+
+let jy;
+
+if(gy>1600){
+jy=979;
+gy-=1600;
+}else{
+jy=0;
+gy-=621;
+}
+
+let gy2=(gm>2)?gy+1:gy;
+
+let days=
+365*gy+
+Math.floor((gy2+3)/4)-
+Math.floor((gy2+99)/100)+
+Math.floor((gy2+399)/400)-
+80+
+gd+
+g_d_m[gm-1];
+
+jy+=33*Math.floor(days/12053);
+
+days%=12053;
+
+jy+=4*Math.floor(days/1461);
+
+days%=1461;
+
+if(days>365){
+
+jy+=Math.floor((days-1)/365);
+
+days=(days-1)%365;
+}
+
+let jm;
+
+if(days<186){
+
+jm=1+Math.floor(days/31);
+}else{
+
+jm=7+Math.floor((days-186)/30);
+}
+
+let jd=1+
+((days<186)?days%31:(days-186)%30);
+
+return [jy,jm,jd];
+
+}
+
+
+/* --------------------------------
+   نمایش عدد فارسی
+-------------------------------- */
+
+function persianNumber(value){
+
+return String(value).replace(
+/[0-9]/g,
+function(d){
+return "۰۱۲۳۴۵۶۷۸۹"[d];
+}
+);
+
+}
+
+
+/* --------------------------------
+   تاریخ امروز
+-------------------------------- */
+
+function todayJalali(){
+
+let d=new Date();
+
+let j=
+gregorianToJalali(
+d.getFullYear(),
+d.getMonth()+1,
+d.getDate()
+);
+
+return persianNumber(
+j[0]+"/"+
+String(j[1]).padStart(2,"0")+"/"+
+String(j[2]).padStart(2,"0")
+);
+
+}
+
+
+/* --------------------------------
+   تبدیل ورودی شمسی به انگلیسی
+-------------------------------- */
+
+function normalizePersianNumber(str){
+
+return str
+.replace(/[۰-۹]/g,function(d){
+return "۰۱۲۳۴۵۶۷۸۹".indexOf(d);
+});
+
+}
+
+
+/* --------------------------------
+   بررسی تاریخ شمسی
+-------------------------------- */
+
+function validJalaliDate(value){
+
+value=normalizePersianNumber(value);
+
+let match=value.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+
+if(!match){
+return false;
+}
+
+let y=parseInt(match[1]);
+let m=parseInt(match[2]);
+let d=parseInt(match[3]);
+
+if(y<1300 || y>1500){
+return false;
+}
+
+if(m<1 || m>12){
+return false;
+}
+
+let maxDay;
+
+if(m<=6){
+maxDay=31;
+}
+else if(m<=11){
+maxDay=30;
+}
+else{
+maxDay=30;
+}
+
+if(d<1 || d>maxDay){
+return false;
+}
+
+return true;
+
+}
+
+
+/* --------------------------------
+   فیلد تاریخ
+-------------------------------- */
+
+function dateField(name,label){
+
+return `
+
+<div class="field">
+
+<label>
+${label}
+</label>
+
+<input
+name="${name}"
+type="text"
+inputmode="numeric"
+placeholder="۱۴۰۵/۰۷/۰۶"
+maxlength="10"
+autocomplete="off"
+required
+oninput="formatJalali(this)"
+>
+
+<div class="date-help">
+مثال: ۱۴۰۵/۰۷/۰۶
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* --------------------------------
+   فرمت خودکار تاریخ
+-------------------------------- */
+
+function formatJalali(input){
+
+let value=input.value;
+
+value=value.replace(/[^0-9۰-۹]/g,"");
+
+if(value.length>4){
+
+value=
+value.substring(0,4)+
+"/"+
+value.substring(4);
+
+}
+
+if(value.length>7){
+
+value=
+value.substring(0,7)+
+"/"+
+value.substring(7,9);
+
+}
+
+input.value=value;
+
+}
+
+
+/* --------------------------------
+   فرم‌ها
+-------------------------------- */
+
 let currentForm="";
 
 const titles={
-    daily:"فرم مرخصی روزانه",
-    hourly:"فرم مرخصی ساعتی",
-    replacement:"فرم جایگزین"
+
+daily:"فرم مرخصی روزانه",
+
+hourly:"فرم مرخصی ساعتی",
+
+replacement:"فرم جایگزین"
+
 };
 
 
 function openForm(type){
 
-    currentForm=type;
+currentForm=type;
 
-    document.getElementById("home").style.display="none";
-    document.getElementById("formPage").style.display="block";
+document.getElementById("home").style.display="none";
 
-    document.getElementById("formTitle").innerText=titles[type];
+document.getElementById("formPage").style.display="block";
 
-    let html="";
+document.getElementById("formTitle").innerText=
+titles[type];
 
+document.getElementById("todayBox").innerHTML=
+"📅 تاریخ امروز: "+
+todayJalali();
 
-    /* مرخصی روزانه */
-
-    if(type==="daily"){
-
-        html=`
-
-        <form onsubmit="submitForm(event)">
-
-        <div class="form-grid">
-
-        <div class="field">
-            <label>شماره مستخدم</label>
-            <input name="user" required>
-        </div>
-
-        <div class="field">
-            <label>نام و نام خانوادگی</label>
-            <input name="name" required>
-        </div>
-
-        <div class="field">
-            <label>واحد / سمت</label>
-            <input name="unit">
-        </div>
-
-        <div class="field">
-            <label>تاریخ درخواست</label>
-            <input name="requestDate" type="date" required>
-        </div>
-
-        <div class="field">
-            <label>از تاریخ</label>
-            <input name="fromDate" type="date" required>
-        </div>
-
-        <div class="field">
-            <label>تا تاریخ</label>
-            <input name="toDate" type="date" required>
-        </div>
-
-        <div class="field">
-            <label>نوع مرخصی</label>
-
-            <select name="leaveType">
-                <option>استحقاقی</option>
-                <option>استعلاجی</option>
-                <option>بدون حقوق</option>
-            </select>
-
-        </div>
-
-        <div class="field">
-            <label>تعداد روز</label>
-            <input name="days" type="number" min="0" step="0.5">
-        </div>
-
-        <div class="field full">
-            <label>توضیحات</label>
-            <textarea name="description" rows="4"></textarea>
-        </div>
-
-        </div>
-
-        <button class="submit">
-            ثبت درخواست
-        </button>
-
-        </form>
-        `;
-    }
+let html="";
 
 
-    /* مرخصی ساعتی */
+/* مرخصی روزانه */
 
-    if(type==="hourly"){
+if(type==="daily"){
 
-        html=`
+html=`
 
-        <form onsubmit="submitForm(event)">
+<form onsubmit="submitForm(event)">
 
-        <div class="form-grid">
+<div class="form-grid">
 
-        <div class="field">
-            <label>نام و نام خانوادگی</label>
-            <input name="name" required>
-        </div>
+<div class="field">
 
-        <div class="field">
-            <label>شماره مستخدم</label>
-            <input name="user" required>
-        </div>
+<label>
+شماره مستخدم
+</label>
 
-        <div class="field">
-            <label>تاریخ</label>
-            <input name="date" type="date" required>
-        </div>
+<input
+name="user"
+required
+>
 
-        <div class="field">
-            <label>واحد / بخش</label>
-            <input name="unit">
-        </div>
-
-        <div class="field">
-            <label>ساعت شروع</label>
-            <input name="start" type="time" required>
-        </div>
-
-        <div class="field">
-            <label>ساعت پایان</label>
-            <input name="end" type="time" required>
-        </div>
-
-        <div class="field full">
-            <label>توضیحات</label>
-            <textarea name="description" rows="4"></textarea>
-        </div>
-
-        </div>
-
-        <button class="submit">
-            ثبت درخواست
-        </button>
-
-        </form>
-        `;
-    }
+</div>
 
 
-    /* جایگزین */
+<div class="field">
 
-    if(type==="replacement"){
+<label>
+نام و نام خانوادگی
+</label>
 
-        html=`
+<input
+name="name"
+required
+>
 
-        <form onsubmit="submitForm(event)">
-
-        <div class="form-grid">
-
-        <div class="field">
-            <label>نام درخواست‌کننده</label>
-            <input name="name" required>
-        </div>
-
-        <div class="field">
-            <label>شماره مستخدم</label>
-            <input name="user">
-        </div>
-
-        <div class="field">
-            <label>نام فرد جایگزین</label>
-            <input name="replacement" required>
-        </div>
-
-        <div class="field">
-            <label>تاریخ</label>
-            <input name="date" type="date" required>
-        </div>
-
-        <div class="field">
-            <label>واحد / بخش</label>
-            <input name="unit">
-        </div>
-
-        <div class="field">
-            <label>شیفت</label>
-            <input name="shift">
-        </div>
-
-        <div class="field full">
-            <label>توضیحات</label>
-            <textarea name="description" rows="4"></textarea>
-        </div>
-
-        </div>
-
-        <button class="submit">
-            ثبت درخواست
-        </button>
-
-        </form>
-        `;
-    }
+</div>
 
 
-    document.getElementById("formContent").innerHTML=html;
+<div class="field">
+
+<label>
+واحد / سمت
+</label>
+
+<input
+name="unit"
+>
+
+</div>
+
+
+${dateField(
+"requestDate",
+"تاریخ درخواست"
+)}
+
+
+${dateField(
+"fromDate",
+"از تاریخ"
+)}
+
+
+${dateField(
+"toDate",
+"تا تاریخ"
+)}
+
+
+<div class="field">
+
+<label>
+نوع مرخصی
+</label>
+
+<select name="leaveType">
+
+<option>
+استحقاقی
+</option>
+
+<option>
+استعلاجی
+</option>
+
+<option>
+بدون حقوق
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+تعداد روز
+</label>
+
+<input
+name="days"
+type="number"
+min="0"
+step="0.5"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+توضیحات
+</label>
+
+<textarea
+name="description"
+rows="4">
+</textarea>
+
+</div>
+
+</div>
+
+
+<button
+class="submit">
+
+ثبت درخواست
+
+</button>
+
+</form>
+
+`;
+
 }
 
+
+/* مرخصی ساعتی */
+
+if(type==="hourly"){
+
+html=`
+
+<form onsubmit="submitForm(event)">
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+نام و نام خانوادگی
+</label>
+
+<input
+name="name"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+شماره مستخدم
+</label>
+
+<input
+name="user"
+required
+>
+
+</div>
+
+
+${dateField(
+"date",
+"تاریخ"
+)}
+
+
+<div class="field">
+
+<label>
+واحد / بخش
+</label>
+
+<input
+name="unit"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+ساعت شروع
+</label>
+
+<input
+name="start"
+type="time"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+ساعت پایان
+</label>
+
+<input
+name="end"
+type="time"
+required
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+توضیحات
+</label>
+
+<textarea
+name="description"
+rows="4">
+</textarea>
+
+</div>
+
+</div>
+
+
+<button class="submit">
+
+ثبت درخواست
+
+</button>
+
+</form>
+
+`;
+
+}
+
+
+/* جایگزین */
+
+if(type==="replacement"){
+
+html=`
+
+<form onsubmit="submitForm(event)">
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+نام درخواست‌کننده
+</label>
+
+<input
+name="name"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+شماره مستخدم
+</label>
+
+<input
+name="user"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+نام فرد جایگزین
+</label>
+
+<input
+name="replacement"
+required
+>
+
+</div>
+
+
+${dateField(
+"date",
+"تاریخ"
+)}
+
+
+<div class="field">
+
+<label>
+واحد / بخش
+</label>
+
+<input
+name="unit"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+شیفت
+</label>
+
+<input
+name="shift"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+توضیحات
+</label>
+
+<textarea
+name="description"
+rows="4">
+</textarea>
+
+</div>
+
+</div>
+
+
+<button class="submit">
+
+ثبت درخواست
+
+</button>
+
+</form>
+
+`;
+
+}
+
+
+document.getElementById("formContent").innerHTML=html;
+
+}
+
+
+/* --------------------------------
+   ثبت فرم
+-------------------------------- */
 
 function submitForm(event){
 
-    event.preventDefault();
+event.preventDefault();
 
-    const form=event.target;
+const form=event.target;
 
-    const data=new FormData(form);
+const dateInputs=
+form.querySelectorAll(
+'input[name="requestDate"],input[name="fromDate"],input[name="toDate"],input[name="date"]'
+);
 
-    let tracking=
-        "GF-"+
-        new Date().getFullYear()+
-        "-"+
-        Math.floor(100000+Math.random()*900000);
+for(let input of dateInputs){
 
+if(!validJalaliDate(input.value)){
 
-    localStorage.setItem(
-        "request_"+tracking,
-        JSON.stringify({
-            type:currentForm,
-            tracking:tracking,
-            date:new Date().toLocaleString("fa-IR"),
-            data:Object.fromEntries(data)
-        })
-    );
+alert(
+"لطفاً تاریخ را به صورت صحیح وارد کنید.\nمثال: ۱۴۰۵/۰۷/۰۶"
+);
 
+input.focus();
 
-    document.getElementById("formContent").innerHTML=`
+return;
 
-        <div class="success">
+}
 
-            <h2>✅ درخواست شما ثبت شد</h2>
-
-            <div>
-                شماره پیگیری:
-            </div>
-
-            <div class="tracking">
-                ${tracking}
-            </div>
-
-            <p>
-                این شماره را برای پیگیری درخواست خود نگه دارید.
-            </p>
-
-            <button class="home-btn" onclick="goHome()">
-                بازگشت به صفحه اصلی
-            </button>
-
-        </div>
-
-    `;
 }
 
 
+const data=new FormData(form);
+
+
+/* شماره پیگیری */
+
+let tracking=
+"GF-"+
+new Date().getFullYear()+
+"-"+
+Math.floor(
+100000+
+Math.random()*900000
+);
+
+
+/* ذخیره موقت در مرورگر */
+
+localStorage.setItem(
+
+"request_"+tracking,
+
+JSON.stringify({
+
+type:currentForm,
+
+tracking:tracking,
+
+createdAt:todayJalali(),
+
+data:Object.fromEntries(data)
+
+})
+
+);
+
+
+document.getElementById("formContent").innerHTML=`
+
+<div class="success">
+
+<h2>
+✅ درخواست با موفقیت ثبت شد
+</h2>
+
+<div>
+شماره پیگیری:
+</div>
+
+<div class="tracking">
+${tracking}
+</div>
+
+<p>
+این شماره را برای پیگیری درخواست خود نگه دارید.
+</p>
+
+<button
+class="home-btn"
+onclick="goHome()">
+
+بازگشت به صفحه اصلی
+
+</button>
+
+</div>
+
+`;
+
+}
+
+
+/* --------------------------------
+   بازگشت
+-------------------------------- */
+
 function goHome(){
 
-    document.getElementById("formPage").style.display="none";
-    document.getElementById("home").style.display="block";
+document.getElementById("formPage").style.display="none";
+
+document.getElementById("home").style.display="block";
 
 }
 
