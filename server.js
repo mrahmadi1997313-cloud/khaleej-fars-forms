@@ -3,20 +3,16 @@ const path = require("path");
 const { Pool } = require("pg");
 
 const app = express();
-
 const PORT = process.env.PORT || 10000;
 
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || "CHANGE_THIS_PASSWORD";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-/*
-|--------------------------------------------------------------------------
-| Database
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Database
+// -------------------------
 
 let pool = null;
 
@@ -29,14 +25,7 @@ if (process.env.DATABASE_URL) {
   });
 }
 
-/*
-|--------------------------------------------------------------------------
-| Database initialization
-|--------------------------------------------------------------------------
-*/
-
 async function initializeDatabase() {
-
   if (!pool) {
     console.log("DATABASE_URL is not configured.");
     return;
@@ -47,72 +36,50 @@ async function initializeDatabase() {
       id SERIAL PRIMARY KEY,
       tracking_code VARCHAR(50) UNIQUE NOT NULL,
       form_type VARCHAR(50) NOT NULL,
-      status VARCHAR(30) DEFAULT 'در انتظار بررسی',
+      status VARCHAR(30) NOT NULL DEFAULT 'در انتظار بررسی',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       data JSONB NOT NULL
     )
   `);
 
-  console.log("Database initialized.");
+  console.log("Database initialized successfully.");
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Health check
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Health
+// -------------------------
 
 app.get("/api/health", async (req, res) => {
-
   let database = "not configured";
 
   if (pool) {
-
     try {
-
       await pool.query("SELECT 1");
-
       database = "connected";
-
     } catch (error) {
-
       database = "error";
-
     }
-
   }
 
   res.json({
     status: "ok",
     database
   });
-
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| Create request
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Create request
+// -------------------------
 
 app.post("/api/requests", async (req, res) => {
-
   try {
-
-    const {
-      formType,
-      data
-    } = req.body;
+    const { formType, data } = req.body;
 
     if (!formType || !data) {
-
       return res.status(400).json({
         success: false,
         message: "اطلاعات فرم ناقص است."
       });
-
     }
 
     const trackingCode =
@@ -121,33 +88,18 @@ app.post("/api/requests", async (req, res) => {
       "-" +
       Math.floor(100000 + Math.random() * 900000);
 
-
-    /*
-     * اگر دیتابیس هنوز متصل نشده باشد،
-     * برای تست شماره پیگیری تولید می‌کنیم.
-     */
-
     if (!pool) {
-
-      return res.json({
-        success: true,
-        trackingCode,
-        message: "درخواست دریافت شد."
+      return res.status(503).json({
+        success: false,
+        message: "دیتابیس هنوز متصل نشده است."
       });
-
     }
-
 
     const result = await pool.query(
       `
       INSERT INTO requests
-      (
-        tracking_code,
-        form_type,
-        data
-      )
-      VALUES
-      ($1, $2, $3)
+      (tracking_code, form_type, data)
+      VALUES ($1, $2, $3)
       RETURNING id, tracking_code, created_at
       `,
       [
@@ -157,78 +109,58 @@ app.post("/api/requests", async (req, res) => {
       ]
     );
 
-
     res.json({
       success: true,
+      id: result.rows[0].id,
       trackingCode: result.rows[0].tracking_code,
-      id: result.rows[0].id
+      createdAt: result.rows[0].created_at
     });
 
   } catch (error) {
-
-    console.error(error);
+    console.error("Create request error:", error);
 
     res.status(500).json({
       success: false,
       message: "خطا در ثبت درخواست."
     });
-
   }
-
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| Admin authentication
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Admin authentication
+// -------------------------
 
 function adminAuth(req, res, next) {
+  const authorization = req.headers.authorization || "";
 
-  const auth =
-    req.headers.authorization || "";
+  const token = authorization.startsWith("Bearer ")
+    ? authorization.substring(7)
+    : "";
 
-  const token =
-    auth.replace("Bearer ", "");
-
-  if (
-    !token ||
-    token !== ADMIN_PASSWORD
-  ) {
-
+  if (!ADMIN_PASSWORD || token !== ADMIN_PASSWORD) {
     return res.status(401).json({
       success: false,
       message: "دسترسی غیرمجاز."
     });
-
   }
 
   next();
-
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| Get requests
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Get admin requests
+// -------------------------
 
 app.get(
   "/api/admin/requests",
   adminAuth,
   async (req, res) => {
-
     try {
-
       if (!pool) {
-
-        return res.json({
-          success: true,
-          requests: []
+        return res.status(503).json({
+          success: false,
+          message: "دیتابیس متصل نیست."
         });
-
       }
 
       const result = await pool.query(`
@@ -249,36 +181,26 @@ app.get(
       });
 
     } catch (error) {
-
-      console.error(error);
+      console.error("Get requests error:", error);
 
       res.status(500).json({
         success: false,
         message: "خطا در دریافت درخواست‌ها."
       });
-
     }
-
   }
 );
 
-
-/*
-|--------------------------------------------------------------------------
-| Update request status
-|--------------------------------------------------------------------------
-*/
+// -------------------------
+// Update status
+// -------------------------
 
 app.patch(
   "/api/admin/requests/:id",
   adminAuth,
   async (req, res) => {
-
     try {
-
-      const {
-        status
-      } = req.body;
+      const { status } = req.body;
 
       const allowedStatuses = [
         "در انتظار بررسی",
@@ -287,21 +209,17 @@ app.patch(
       ];
 
       if (!allowedStatuses.includes(status)) {
-
         return res.status(400).json({
           success: false,
           message: "وضعیت نامعتبر است."
         });
-
       }
 
       if (!pool) {
-
         return res.status(503).json({
           success: false,
           message: "دیتابیس متصل نیست."
         });
-
       }
 
       const result = await pool.query(
@@ -317,13 +235,11 @@ app.patch(
         ]
       );
 
-      if (!result.rowCount) {
-
+      if (result.rowCount === 0) {
         return res.status(404).json({
           success: false,
           message: "درخواست پیدا نشد."
         });
-
       }
 
       res.json({
@@ -332,131 +248,151 @@ app.patch(
       });
 
     } catch (error) {
-
-      console.error(error);
+      console.error("Update status error:", error);
 
       res.status(500).json({
         success: false,
         message: "خطا در تغییر وضعیت."
       });
-
     }
-
   }
 );
 
+// -------------------------
+// Admin dashboard
+// -------------------------
 
-/*
-|--------------------------------------------------------------------------
-| Admin dashboard
-|--------------------------------------------------------------------------
-*/
-
-app.get("/admin", adminAuthPage);
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin login page
-|--------------------------------------------------------------------------
-*/
-
-function adminAuthPage(req, res) {
-
+app.get("/admin", (req, res) => {
   res.send(`
 <!DOCTYPE html>
-
 <html lang="fa" dir="rtl">
 
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width,initial-scale=1">
+content="width=device-width, initial-scale=1.0">
 
-<title>پنل مدیریت</title>
+<title>پنل مدیریت | مرکز مبادله هوشمند خلیج فارس</title>
 
 <style>
 
-body{
-margin:0;
-font-family:Tahoma,Arial;
-background:#f1eee8;
-color:#12365f;
+* {
+  box-sizing: border-box;
 }
 
-.box{
-max-width:1000px;
-margin:30px auto;
-padding:20px;
+body {
+  margin: 0;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f1eee8;
+  color: #12365f;
 }
 
-.card{
-background:white;
-border-radius:18px;
-padding:20px;
-box-shadow:0 8px 25px #0002;
-margin-bottom:20px;
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 25px 15px 50px;
 }
 
-h1{
-color:#073564;
+.header {
+  background: linear-gradient(135deg, #062c59, #14528f);
+  color: white;
+  border: 2px solid #d5a52c;
+  border-radius: 20px;
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-input{
-padding:12px;
-border:1px solid #bbb;
-border-radius:10px;
-font-family:inherit;
-width:100%;
-box-sizing:border-box;
-margin:8px 0;
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.12);
+  margin-bottom: 20px;
 }
 
-button{
-padding:11px 18px;
-border:0;
-border-radius:10px;
-background:#073564;
-color:white;
-font-family:inherit;
-cursor:pointer;
-margin:3px;
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  font-family: inherit;
+  margin: 8px 0;
 }
 
-button.approve{
-background:#198754;
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 18px;
+  color: white;
+  background: #073564;
+  font-family: inherit;
+  cursor: pointer;
+  margin: 4px;
 }
 
-button.reject{
-background:#b02a37;
+button.approve {
+  background: #198754;
 }
 
-.request{
-border:1px solid #ddd;
-border-radius:15px;
-padding:15px;
-margin-top:15px;
+button.reject {
+  background: #b02a37;
 }
 
-.status{
-font-weight:bold;
+.request {
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  padding: 16px;
+  margin-top: 15px;
+  background: #fafafa;
+}
+
+.request-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.status {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.detail {
+  margin: 5px 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px;
+  color: #777;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<div class="card">
+<div class="header">
 
 <h1>
 پنل مدیریت
 </h1>
+
+<div>
+مرکز مبادله هوشمند خلیج فارس
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>
+ورود مدیر
+</h2>
 
 <input
 id="password"
@@ -465,25 +401,24 @@ placeholder="رمز ورود مدیر"
 >
 
 <button onclick="login()">
-ورود
+ورود به پنل
 </button>
 
 </div>
 
-
 <div
 id="dashboard"
-style="display:none"
+style="display:none;"
 >
 
 <div class="card">
 
 <h2>
-درخواست‌های ثبت شده
+درخواست‌های ثبت‌شده
 </h2>
 
 <button onclick="loadRequests()">
-به‌روزرسانی
+🔄 به‌روزرسانی
 </button>
 
 <div id="requests">
@@ -495,276 +430,258 @@ style="display:none"
 
 </div>
 
-
 <script>
 
 let adminToken = "";
 
+function login() {
 
-function login(){
+  const password =
+    document.getElementById("password").value.trim();
 
-adminToken =
-document.getElementById(
-"password"
-).value;
+  if (!password) {
+    alert("لطفاً رمز ورود را وارد کنید.");
+    return;
+  }
 
-if(!adminToken){
+  adminToken = password;
 
-alert("رمز را وارد کنید.");
+  document.getElementById("dashboard").style.display = "block";
 
-return;
-
+  loadRequests();
 }
 
-document.getElementById(
-"dashboard"
-).style.display =
-"block";
+async function loadRequests() {
 
-loadRequests();
+  try {
 
+    const response = await fetch(
+      "/api/admin/requests",
+      {
+        headers: {
+          "Authorization":
+            "Bearer " + adminToken
+        }
+      }
+    );
+
+    if (response.status === 401) {
+      alert("رمز عبور صحیح نیست.");
+      document.getElementById("dashboard").style.display = "none";
+      return;
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      alert(result.message || "خطا در دریافت اطلاعات.");
+      return;
+    }
+
+    const container =
+      document.getElementById("requests");
+
+    container.innerHTML = "";
+
+    if (
+      !result.requests ||
+      result.requests.length === 0
+    ) {
+
+      container.innerHTML =
+        '<div class="empty">هنوز درخواستی ثبت نشده است.</div>';
+
+      return;
+    }
+
+    result.requests.forEach(request => {
+
+      const data = request.data || {};
+
+      let details = "";
+
+      Object.entries(data).forEach(
+        ([key, value]) => {
+
+          details +=
+            '<div class="detail">' +
+            '<b>' +
+            escapeHtml(key) +
+            ':</b> ' +
+            escapeHtml(String(value ?? "")) +
+            '</div>';
+
+        }
+      );
+
+      const requestElement =
+        document.createElement("div");
+
+      requestElement.className = "request";
+
+      requestElement.innerHTML =
+
+        '<div class="request-title">' +
+        '📋 درخواست ' +
+        escapeHtml(request.tracking_code) +
+        '</div>' +
+
+        '<div class="detail">' +
+        '<b>نوع فرم:</b> ' +
+        escapeHtml(request.form_type) +
+        '</div>' +
+
+        '<div class="detail">' +
+        '<b>تاریخ ثبت:</b> ' +
+        escapeHtml(
+          new Date(request.created_at)
+          .toLocaleString("fa-IR")
+        ) +
+        '</div>' +
+
+        '<div class="status">' +
+        '<b>وضعیت:</b> ' +
+        escapeHtml(request.status) +
+        '</div>' +
+
+        '<hr>' +
+
+        details +
+
+        '<br>' +
+
+        '<button class="approve" ' +
+        'onclick="changeStatus(' +
+        request.id +
+        ', \\'تأیید شد\\')">' +
+        '✅ تأیید درخواست' +
+        '</button>' +
+
+        '<button class="reject" ' +
+        'onclick="changeStatus(' +
+        request.id +
+        ', \\'رد شد\\')">' +
+        '❌ رد درخواست' +
+        '</button>';
+
+      container.appendChild(requestElement);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("ارتباط با سرور برقرار نشد.");
+
+  }
 }
 
+async function changeStatus(id, status) {
 
-async function loadRequests(){
+  try {
 
-const response =
-await fetch(
-"/api/admin/requests",
-{
-headers:{
-"Authorization":
-"Bearer "+adminToken
-}
-}
-);
+    const response = await fetch(
+      "/api/admin/requests/" + id,
+      {
+        method: "PATCH",
 
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":
+            "Bearer " + adminToken
+        },
 
-if(response.status===401){
+        body: JSON.stringify({
+          status: status
+        })
+      }
+    );
 
-alert("رمز عبور اشتباه است.");
+    const result =
+      await response.json();
 
-return;
+    if (result.success) {
 
-}
+      loadRequests();
 
+    } else {
 
-const result =
-await response.json();
+      alert(
+        result.message ||
+        "خطا در تغییر وضعیت."
+      );
 
+    }
 
-const container =
-document.getElementById(
-"requests"
-);
+  } catch (error) {
 
+    console.error(error);
 
-container.innerHTML = "";
+    alert("ارتباط با سرور برقرار نشد.");
 
-
-if(
-!result.requests ||
-result.requests.length===0
-){
-
-container.innerHTML =
-"<p>درخواستی ثبت نشده است.</p>";
-
-return;
-
+  }
 }
 
+function escapeHtml(value) {
 
-result.requests.forEach(
-request => {
-
-const data =
-request.data || {};
-
-
-let details = "";
-
-Object.entries(data)
-.forEach(
-([key,value]) => {
-
-details +=
-"<div><b>"+
-key+
-":</b> "+
-(value || "")+
-"</div>";
-
-}
-);
-
-
-container.innerHTML += `
-
-<div class="request">
-
-<div>
-<b>شماره پیگیری:</b>
-${request.tracking_code}
-</div>
-
-<div>
-<b>نوع فرم:</b>
-${request.form_type}
-</div>
-
-<div>
-<b>تاریخ ثبت:</b>
-${new Date(
-request.created_at
-).toLocaleString("fa-IR")}
-</div>
-
-<div class="status">
-<b>وضعیت:</b>
-${request.status}
-</div>
-
-<hr>
-
-${details}
-
-<br>
-
-<button
-class="approve"
-onclick="changeStatus(
-${request.id},
-'تأیید شد'
-)">
-
-تأیید درخواست
-
-</button>
-
-<button
-class="reject"
-onclick="changeStatus(
-${request.id},
-'رد شد'
-)">
-
-رد درخواست
-
-</button>
-
-</div>
-
-`;
-
-});
-
-}
-
-
-async function changeStatus(
-id,
-status
-){
-
-const response =
-await fetch(
-"/api/admin/requests/"+id,
-{
-method:"PATCH",
-
-headers:{
-"Content-Type":
-"application/json",
-
-"Authorization":
-"Bearer "+adminToken
-},
-
-body:JSON.stringify({
-status:status
-})
-
-});
-
-
-const result =
-await response.json();
-
-
-if(result.success){
-
-loadRequests();
-
-}else{
-
-alert(
-result.message ||
-"خطا"
-);
-
-}
-
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 </script>
 
 </body>
-
 </html>
-`);
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Static website
-|--------------------------------------------------------------------------
-*/
-
-app.use(
-express.static(
-path.join(__dirname)
-)
-);
-
-
-/*
-|--------------------------------------------------------------------------
-| Start server
-|--------------------------------------------------------------------------
-*/
-
-async function start(){
-
-try{
-
-await initializeDatabase();
-
-app.listen(
-PORT,
-"0.0.0.0",
-() => {
-
-console.log(
-"Server running on port "+
-PORT
-);
-
+  `);
 });
 
-}catch(error){
+// -------------------------
+// Static files
+// -------------------------
 
-console.error(
-"Server startup error:",
-error
+app.use(
+  express.static(
+    path.join(__dirname)
+  )
 );
 
-process.exit(1);
+// -------------------------
+// Start
+// -------------------------
 
-}
+async function start() {
 
+  try {
+
+    await initializeDatabase();
+
+    app.listen(
+      PORT,
+      "0.0.0.0",
+      () => {
+
+        console.log(
+          "Server running on port " +
+          PORT
+        );
+
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Server startup error:",
+      error
+    );
+
+    process.exit(1);
+  }
 }
 
 start();
