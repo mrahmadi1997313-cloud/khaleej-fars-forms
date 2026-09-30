@@ -1031,108 +1031,111 @@ document.getElementById("formContent").innerHTML=html;
    ثبت فرم
 -------------------------------- */
 
-function submitForm(event){
+async function submitForm(event){
 
-event.preventDefault();
+  event.preventDefault();
 
-const form=event.target;
+  const form = event.target;
 
-const dateInputs=
-form.querySelectorAll(
-'input[name="requestDate"],input[name="fromDate"],input[name="toDate"],input[name="date"]'
-);
+  const dateInputs = form.querySelectorAll(
+    'input[name="requestDate"],input[name="fromDate"],input[name="toDate"],input[name="date"]'
+  );
 
-for(let input of dateInputs){
+  for(let input of dateInputs){
 
-if(!validJalaliDate(input.value)){
+    if(!validJalaliDate(input.value)){
 
-alert(
-"لطفاً تاریخ را به صورت صحیح وارد کنید.\nمثال: ۱۴۰۵/۰۷/۰۶"
-);
+      alert(
+        "لطفاً تاریخ را به صورت صحیح وارد کنید.\nمثال: ۱۴۰۵/۰۷/۰۶"
+      );
 
-input.focus();
+      input.focus();
+      return;
+    }
+  }
 
-return;
+  const data = Object.fromEntries(
+    new FormData(form)
+  );
 
+  const submitButton = form.querySelector(".submit");
+
+  submitButton.disabled = true;
+  submitButton.innerText = "در حال ثبت...";
+
+  try {
+
+    const response = await fetch("/api/requests", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        formType: currentForm,
+        data: data
+      })
+
+    });
+
+    const result = await response.json();
+
+    if(!response.ok || !result.success){
+
+      throw new Error(
+        result.message || "خطا در ثبت درخواست"
+      );
+
+    }
+
+    const tracking = result.trackingCode;
+
+    document.getElementById("formContent").innerHTML = `
+
+      <div class="success">
+
+        <h2>
+          ✅ درخواست با موفقیت ثبت شد
+        </h2>
+
+        <div>
+          شماره پیگیری:
+        </div>
+
+        <div class="tracking">
+          ${tracking}
+        </div>
+
+        <p>
+          درخواست شما با موفقیت در سامانه ثبت و در دیتابیس مرکزی ذخیره شد.
+        </p>
+
+        <button
+          class="home-btn"
+          onclick="goHome()">
+
+          بازگشت به صفحه اصلی
+
+        </button>
+
+      </div>
+
+    `;
+
+  } catch(error){
+
+    console.error(error);
+
+    alert(
+      "ثبت درخواست انجام نشد.\nلطفاً اتصال اینترنت را بررسی کنید و دوباره تلاش کنید."
+    );
+
+    submitButton.disabled = false;
+    submitButton.innerText = "ثبت درخواست";
+  }
 }
-
-}
-
-
-const data=new FormData(form);
-
-
-/* شماره پیگیری */
-
-let tracking=
-"GF-"+
-new Date().getFullYear()+
-"-"+
-Math.floor(
-100000+
-Math.random()*900000
-);
-
-
-/* ذخیره موقت در مرورگر */
-
-localStorage.setItem(
-
-"request_"+tracking,
-
-JSON.stringify({
-
-type:currentForm,
-
-tracking:tracking,
-
-createdAt:todayJalali(),
-
-data:Object.fromEntries(data)
-
-})
-
-);
-
-
-document.getElementById("formContent").innerHTML=`
-
-<div class="success">
-
-<h2>
-✅ درخواست با موفقیت ثبت شد
-</h2>
-
-<div>
-شماره پیگیری:
-</div>
-
-<div class="tracking">
-${tracking}
-</div>
-
-<p>
-این شماره را برای پیگیری درخواست خود نگه دارید.
-</p>
-
-<button
-class="home-btn"
-onclick="goHome()">
-
-بازگشت به صفحه اصلی
-
-</button>
-
-</div>
-
-`;
-
-}
-
-
-/* --------------------------------
-   بازگشت
--------------------------------- */
 
 function goHome(){
 
