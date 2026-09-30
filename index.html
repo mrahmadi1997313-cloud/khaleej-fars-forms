@@ -1145,6 +1145,78 @@ document.getElementById("home").style.display="block";
 
 }
 
+   async function submitForm(event){
+
+event.preventDefault();
+
+const form = event.target;
+
+const data = new FormData(form);
+
+const formData = Object.fromEntries(data.entries());
+
+try{
+
+const response = await fetch("/api/requests",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+formType:currentForm,
+data:formData
+})
+
+});
+
+const result = await response.json();
+
+if(!response.ok || !result.success){
+
+alert(result.message || "خطا در ثبت درخواست.");
+
+return;
+
+}
+
+document.getElementById("formContent").innerHTML = `
+
+<div class="success">
+
+<h2>✅ درخواست با موفقیت ثبت شد</h2>
+
+<div>شماره پیگیری:</div>
+
+<div class="tracking">
+${result.trackingCode}
+</div>
+
+<p>
+این شماره را برای پیگیری درخواست خود نگه دارید.
+</p>
+
+<button
+class="home-btn"
+onclick="goHome()">
+بازگشت به صفحه اصلی
+</button>
+
+</div>
+
+`;
+
+}catch(error){
+
+console.error(error);
+
+alert("ارتباط با سرور برقرار نشد.");
+
+}
+
+   }
 </script>
 
 </body>
